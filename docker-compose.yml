@@ -2,37 +2,18 @@ version: '3.8'
 
 services:
   mysql:
-    image: mysql:8.0
-    container_name: mysql_db
+    image: mysql:8.0   # Use the desired MySQL version
+    container_name: mysql_container
+    restart: always    # Ensures the container restarts on failure
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: my_database
-      MYSQL_USER: my_user
-      MYSQL_PASSWORD: user_password
+      MYSQL_ROOT_PASSWORD: rootpassword   # Replace with a secure password
+      MYSQL_DATABASE: exampledb           # Optional: Pre-create a database
+      MYSQL_USER: exampleuser             # Optional: Create a user
+      MYSQL_PASSWORD: examplepassword     # Optional: Set a password for the user
     ports:
-      - "3306:3306"  # Expose MySQL on port 3306
+      - "3306:3306"   # Map MySQL port to the host
     volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - my_network
-
-  workbench:
-    image: mysql/mysql-workbench:latest
-    container_name: mysql_workbench
-    environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_ROOT_HOST: mysql_db  # Point to the MySQL container
-    depends_on:
-      - mysql
-    networks:
-      - my_network
-    ports:
-      - "8080:8080"  # Map this to a desired port on the host if needed for remote access
-    entrypoint: /usr/bin/mysql-workbench
+      - db_data:/var/lib/mysql    # Persist data across container restarts
 
 volumes:
-  mysql_data:  # Persistent storage for MySQL data
-
-networks:
-  my_network:
-    driver: bridge
+  db_data:
